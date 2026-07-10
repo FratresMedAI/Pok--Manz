@@ -27,6 +27,7 @@ def load_agent(path: Path):
         raise RuntimeError(f"Unable to load agent from {path}")
     module = importlib.util.module_from_spec(spec)
     sys.path.insert(0, str(path.parent))
+    sys.modules[path.stem] = module
     spec.loader.exec_module(module)
     return module.agent
 
