@@ -109,8 +109,10 @@ def dragapult_score_option(obs: Any, option: Any, registry: dict[int, CardFeatur
         if ctx in {"SETUP_BENCH_POKEMON", "TO_BENCH", "TO_FIELD"} and selected_id == DREEPY:
             score += 2400.0
         elif ctx in {"DAMAGE", "DAMAGE_COUNTER", "EFFECT_TARGET", "SWITCH", "TO_ACTIVE"}:
-            if selected_id in ALAKAZAM_ENGINE:
-                score += 3600.0
+            if selected_id in {DUNSPARCE, DUDUNSPARCE}:
+                score += 5200.0
+            elif selected_id in ALAKAZAM_ENGINE:
+                score += 2200.0
             elif selected_id in {FEZANDIPITI, 343, 391}:
                 score += 2400.0
 

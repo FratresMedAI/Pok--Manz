@@ -27,7 +27,7 @@ from src.agents.cards import (
 from src.agents.control_policy import choose_control_indices, is_alakazam_deck
 from src.agents.counter_policy import choose_counter_indices, is_dragapult_deck, is_iron_thorns_deck, is_ogerpon_wall_deck
 from src.agents.evaluator import choose_indices, context_value, match_phase, option_type_name, safe_getattr
-from src.agents.hail_mary_tactics import evaluate_hail_mary_tactics, update_runtime_context
+from src.agents.anti_psychic_control import check_anti_alakazam_overrides
 from src.agents.simulator_exploits import execute_advanced_simulator_exploits, update_match_signals
 from src.agents.state_tracker import GameStateTracker
 from src.agents.telemetry_logger import log_decision
@@ -357,6 +357,7 @@ def agent(obs_dict: dict) -> list[int]:
                     "choice": verified,
                     "exploit": execute_advanced_simulator_exploits(obs, build_registry()),
                     "hail_mary": evaluate_hail_mary_tactics(obs, build_registry()),
+                    "anti_alakazam": check_anti_alakazam_overrides(obs, build_registry()),
                 },
             )
             return verified
