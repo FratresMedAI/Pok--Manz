@@ -1,0 +1,135 @@
+"""Parallel CABT evaluation runner for CPU pods."""
+
+from __future__ import annotations
+
+import argparse
+import importlib.util
+import multiprocessing as mp
+import os
+import sys
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SDK_DIR = ROOT / "vendor" / "cabt_sample_submission"
+DEFAULT_WORKERS = 31
+
+_AGENT_A: Any = None
+_AGENT_B: Any = None
+_DECK_A: list[int] = []
+_DECK_B: list[int] = []
+
+
+def load_agent(path: Path):
+    spec = importlib.util.spec_from_file_location(path.stem, path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Unable to load agent from {path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.path.insert(0, str(path.parent))
+    spec.loader.exec_module(module)
+    return module.agent
+
+
+def read_deck(path: Path) -> list[int]:
+    return [int(line.strip()) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()][:60]
+
+
+def with_deck(agent_func, deck: list[int]):
+    def wrapped(obs_dict):
+        if obs_dict.get("select") is None:
+            return deck
+        return agent_func(obs_dict)
+
+    return wrapped
+
+
+def final_result(env) -> int | None:
+    try:
+        last = env.steps[-1]
+        statuses = [getattr(step, "status", None) for step in last]
+        if any(status == "ERROR" for status in statuses):
+            return None
+        rewards = [getattr(step, "reward", None) for step in last]
+        if rewards[0] is not None and rewards[1] is not None:
+            if rewards[0] > rewards[1]:
+                return 0
+            if rewards[1] > rewards[0]:
+                return 1
+            return 2
+    except Exception:
+        pass
+
+    try:
+        last = env.steps[-1][0]
+        observation = last.observation
+        current = observation.get("current") if isinstance(observation, dict) else None
+        if current and current.get("result") in (0, 1, 2):
+            return current.get("result")
+    except Exception:
+        return None
+    return None
+
+
+def init_worker(agent_a: str, agent_b: str, deck_a: str, deck_b: str) -> None:
+    global _AGENT_A, _AGENT_B, _DECK_A, _DECK_B
+    os.environ.setdefault("POKEMAYNE_TELEMETRY", "0")
+    sys.path.insert(0, str(SDK_DIR))
+    _DECK_A = read_deck(ROOT / deck_a)
+    _DECK_B = read_deck(ROOT / deck_b)
+    _AGENT_A = with_deck(load_agent(ROOT / agent_a), _DECK_A)
+    _AGENT_B = with_deck(load_agent(ROOT / agent_b), _DECK_B)
+
+
+def run_game(game_index: int) -> tuple[int, int | None, str | None]:
+    try:
+        from kaggle_environments import make
+
+        env = make("cabt", configuration={"decks": [_DECK_A, _DECK_B]})
+        env.run([_AGENT_A, _AGENT_B])
+        return (game_index, final_result(env), None)
+    except Exception as exc:
+        return (game_index, None, str(exc))
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--games", type=int, default=310)
+    parser.add_argument("--workers", type=int, default=DEFAULT_WORKERS)
+    parser.add_argument("--agent-a", default="submission/main.py")
+    parser.add_argument("--agent-b", default="vendor/cabt_sample_submission/main.py")
+    parser.add_argument("--deck-a", default="submission/deck.csv")
+    parser.add_argument("--deck-b", default="vendor/cabt_sample_submission/deck.csv")
+    args = parser.parse_args()
+
+    workers = max(1, min(args.workers, DEFAULT_WORKERS))
+    wins = losses = draws = errors = 0
+    with mp.Pool(
+        processes=workers,
+        initializer=init_worker,
+        initargs=(args.agent_a, args.agent_b, args.deck_a, args.deck_b),
+    ) as pool:
+        for game_index, result, error in pool.imap_unordered(run_game, range(1, args.games + 1)):
+            if result == 0:
+                wins += 1
+            elif result == 1:
+                losses += 1
+            elif result == 2:
+                draws += 1
+            else:
+                errors += 1
+            if error:
+                print(f"game={game_index} error={error}", flush=True)
+            else:
+                print(f"game={game_index} result={result}", flush=True)
+
+    total = max(1, args.games)
+    print(
+        f"workers={workers} wins={wins} losses={losses} draws={draws} errors={errors} "
+        f"win_rate={wins / total:.3f}",
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    main()

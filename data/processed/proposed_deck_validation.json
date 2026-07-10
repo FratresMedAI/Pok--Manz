@@ -1,0 +1,319 @@
+{
+  "dragapult_proposed": {
+    "found": {
+      "Dreepy": {
+        "count": 4,
+        "matches": [
+          {
+            "card_id": 119,
+            "name": "Dreepy",
+            "hp": 70,
+            "tags": []
+          }
+        ]
+      },
+      "Drakloak": {
+        "count": 2,
+        "matches": [
+          {
+            "card_id": 120,
+            "name": "Drakloak",
+            "hp": 90,
+            "tags": []
+          }
+        ]
+      },
+      "Dragapult ex": {
+        "count": 3,
+        "matches": [
+          {
+            "card_id": 121,
+            "name": "Dragapult ex",
+            "hp": 320,
+            "tags": [
+              "multi_prize"
+            ]
+          }
+        ]
+      },
+      "Fezandipiti ex": {
+        "count": 1,
+        "matches": [
+          {
+            "card_id": 140,
+            "name": "Fezandipiti ex",
+            "hp": 210,
+            "tags": [
+              "multi_prize"
+            ]
+          }
+        ]
+      },
+      "Buddy-Buddy Poffin": {
+        "count": 4,
+        "matches": [
+          {
+            "card_id": 1086,
+            "name": "Buddy-Buddy Poffin",
+            "hp": 0,
+            "tags": [
+              "search"
+            ]
+          }
+        ]
+      },
+      "Ultra Ball": {
+        "count": 4,
+        "matches": [
+          {
+            "card_id": 1121,
+            "name": "Ultra Ball",
+            "hp": 0,
+            "tags": [
+              "search"
+            ]
+          }
+        ]
+      },
+      "Rare Candy": {
+        "count": 4,
+        "matches": [
+          {
+            "card_id": 1079,
+            "name": "Rare Candy",
+            "hp": 0,
+            "tags": []
+          }
+        ]
+      },
+      "Prime Catcher": {
+        "count": 1,
+        "matches": [
+          {
+            "card_id": 1088,
+            "name": "Prime Catcher",
+            "hp": 0,
+            "tags": [
+              "gust",
+              "switch"
+            ]
+          }
+        ]
+      },
+      "Basic {R} Energy": {
+        "count": 4,
+        "matches": [
+          {
+            "card_id": 2,
+            "name": "Basic {R} Energy",
+            "hp": 0,
+            "tags": [
+              "energy"
+            ]
+          }
+        ]
+      },
+      "Basic {P} Energy": {
+        "count": 4,
+        "matches": [
+          {
+            "card_id": 5,
+            "name": "Basic {P} Energy",
+            "hp": 0,
+            "tags": [
+              "energy"
+            ]
+          }
+        ]
+      }
+    },
+    "missing": {
+      "Pidgey": 2,
+      "Pidgeot ex": 2,
+      "Rotom V": 1,
+      "Radiant Alakazam": 2,
+      "Nest Ball": 3,
+      "Earthen Vessel": 2,
+      "Super Rod": 1,
+      "Professor's Research": 4,
+      "Iono": 3,
+      "Arven": 3,
+      "Boss's Orders": 2
+    },
+    "total_requested": 56,
+    "total_resolved": 31
+  },
+  "ogerpon_wall_proposed": {
+    "found": {
+      "Cornerstone Mask Ogerpon ex": {
+        "count": 3,
+        "matches": [
+          {
+            "card_id": 117,
+            "name": "Cornerstone Mask Ogerpon ex",
+            "hp": 210,
+            "tags": [
+              "multi_prize"
+            ]
+          }
+        ]
+      },
+      "Teal Mask Ogerpon ex": {
+        "count": 3,
+        "matches": [
+          {
+            "card_id": 96,
+            "name": "Teal Mask Ogerpon ex",
+            "hp": 210,
+            "tags": [
+              "energy",
+              "multi_prize"
+            ]
+          }
+        ]
+      },
+      "Riolu": {
+        "count": 2,
+        "matches": [
+          {
+            "card_id": 333,
+            "name": "Riolu",
+            "hp": 70,
+            "tags": []
+          },
+          {
+            "card_id": 677,
+            "name": "Riolu",
+            "hp": 80,
+            "tags": [
+              "multi_prize"
+            ]
+          },
+          {
+            "card_id": 974,
+            "name": "Riolu",
+            "hp": 70,
+            "tags": []
+          }
+        ]
+      },
+      "Fezandipiti ex": {
+        "count": 1,
+        "matches": [
+          {
+            "card_id": 140,
+            "name": "Fezandipiti ex",
+            "hp": 210,
+            "tags": [
+              "multi_prize"
+            ]
+          }
+        ]
+      },
+      "Ultra Ball": {
+        "count": 4,
+        "matches": [
+          {
+            "card_id": 1121,
+            "name": "Ultra Ball",
+            "hp": 0,
+            "tags": [
+              "search"
+            ]
+          }
+        ]
+      },
+      "Energy Switch": {
+        "count": 3,
+        "matches": [
+          {
+            "card_id": 1116,
+            "name": "Energy Switch",
+            "hp": 0,
+            "tags": [
+              "energy",
+              "switch"
+            ]
+          }
+        ]
+      },
+      "Enhanced Hammer": {
+        "count": 2,
+        "matches": [
+          {
+            "card_id": 1081,
+            "name": "Enhanced Hammer",
+            "hp": 0,
+            "tags": [
+              "energy"
+            ]
+          }
+        ]
+      },
+      "Prime Catcher": {
+        "count": 1,
+        "matches": [
+          {
+            "card_id": 1088,
+            "name": "Prime Catcher",
+            "hp": 0,
+            "tags": [
+              "gust",
+              "switch"
+            ]
+          }
+        ]
+      },
+      "Battle Cage": {
+        "count": 2,
+        "matches": [
+          {
+            "card_id": 1264,
+            "name": "Battle Cage",
+            "hp": 0,
+            "tags": []
+          }
+        ]
+      },
+      "Basic {F} Energy": {
+        "count": 8,
+        "matches": [
+          {
+            "card_id": 6,
+            "name": "Basic {F} Energy",
+            "hp": 0,
+            "tags": [
+              "energy"
+            ]
+          }
+        ]
+      },
+      "Basic {G} Energy": {
+        "count": 4,
+        "matches": [
+          {
+            "card_id": 1,
+            "name": "Basic {G} Energy",
+            "hp": 0,
+            "tags": [
+              "energy"
+            ]
+          }
+        ]
+      }
+    },
+    "missing": {
+      "Lucario": 2,
+      "Squawkabilly ex": 1,
+      "Nest Ball": 4,
+      "Earthen Vessel": 4,
+      "Switch Cart": 2,
+      "Super Rod": 2,
+      "Professor's Research": 4,
+      "Iono": 4,
+      "Boss's Orders": 3
+    },
+    "total_requested": 59,
+    "total_resolved": 33
+  }
+}

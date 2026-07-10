@@ -1,0 +1,209 @@
+{
+  "source": "C:\\Users\\Besn Daddy\\Desktop\\PokeMayne\\data\\leaderboard\\pokemon-tcg-ai-battle-publicleaderboard-2026-07-10T09_45_40.csv",
+  "teams": 4720,
+  "top_score": 1298.9,
+  "median_score": 668.2,
+  "score_90th_percentile": 883.3,
+  "top_25": [
+    {
+      "rank": 1,
+      "team_id": "16381823",
+      "team_name": "Yushin Ito",
+      "score": 1298.9,
+      "last_submission": "2026-07-09 07:32:23",
+      "submissions": 2
+    },
+    {
+      "rank": 2,
+      "team_id": "16376499",
+      "team_name": "MPGaming",
+      "score": 1174.9,
+      "last_submission": "2026-07-09 11:10:54",
+      "submissions": 2
+    },
+    {
+      "rank": 3,
+      "team_id": "16374395",
+      "team_name": "Majkel1337",
+      "score": 1160.1,
+      "last_submission": "2026-07-09 23:04:46",
+      "submissions": 2
+    },
+    {
+      "rank": 4,
+      "team_id": "16371722",
+      "team_name": "nasuo445",
+      "score": 1119.9,
+      "last_submission": "2026-07-05 16:44:25",
+      "submissions": 2
+    },
+    {
+      "rank": 5,
+      "team_id": "16379289",
+      "team_name": "wkonishi",
+      "score": 1119.4,
+      "last_submission": "2026-07-10 04:12:50",
+      "submissions": 2
+    },
+    {
+      "rank": 6,
+      "team_id": "16393241",
+      "team_name": "WinDecks",
+      "score": 1118.1,
+      "last_submission": "2026-07-06 01:10:07",
+      "submissions": 2
+    },
+    {
+      "rank": 7,
+      "team_id": "16371427",
+      "team_name": "bono",
+      "score": 1114.6,
+      "last_submission": "2026-07-09 10:09:54",
+      "submissions": 2
+    },
+    {
+      "rank": 8,
+      "team_id": "16371393",
+      "team_name": "Tahsin Arafat",
+      "score": 1113.2,
+      "last_submission": "2026-07-10 08:34:56",
+      "submissions": 2
+    },
+    {
+      "rank": 9,
+      "team_id": "16463316",
+      "team_name": "LiamK",
+      "score": 1104.5,
+      "last_submission": "2026-07-09 18:27:33",
+      "submissions": 2
+    },
+    {
+      "rank": 10,
+      "team_id": "16383238",
+      "team_name": "Dũng Đỗ",
+      "score": 1097.3,
+      "last_submission": "2026-07-08 04:09:19",
+      "submissions": 2
+    },
+    {
+      "rank": 11,
+      "team_id": "16371653",
+      "team_name": "213tubo",
+      "score": 1095.6,
+      "last_submission": "2026-07-08 17:44:14",
+      "submissions": 2
+    },
+    {
+      "rank": 12,
+      "team_id": "16385080",
+      "team_name": "Michael Long",
+      "score": 1088.0,
+      "last_submission": "2026-07-08 02:47:55",
+      "submissions": 2
+    },
+    {
+      "rank": 13,
+      "team_id": "16391443",
+      "team_name": "capbloo",
+      "score": 1085.8,
+      "last_submission": "2026-07-10 00:59:27",
+      "submissions": 2
+    },
+    {
+      "rank": 14,
+      "team_id": "16441839",
+      "team_name": "taksai",
+      "score": 1076.3,
+      "last_submission": "2026-07-10 05:29:42",
+      "submissions": 2
+    },
+    {
+      "rank": 15,
+      "team_id": "16380895",
+      "team_name": "Sota Uchiyama",
+      "score": 1073.5,
+      "last_submission": "2026-07-09 10:59:53",
+      "submissions": 2
+    },
+    {
+      "rank": 16,
+      "team_id": "16422241",
+      "team_name": "Raihan Ramadistra",
+      "score": 1066.0,
+      "last_submission": "2026-07-09 15:43:17",
+      "submissions": 2
+    },
+    {
+      "rank": 17,
+      "team_id": "16375517",
+      "team_name": "Alberto Bonsanto",
+      "score": 1065.6,
+      "last_submission": "2026-07-08 21:54:52",
+      "submissions": 2
+    },
+    {
+      "rank": 18,
+      "team_id": "16376773",
+      "team_name": "hikarimaru",
+      "score": 1064.6,
+      "last_submission": "2026-07-10 07:20:18",
+      "submissions": 2
+    },
+    {
+      "rank": 19,
+      "team_id": "16375066",
+      "team_name": "youtube.com/@BigBugginnings",
+      "score": 1063.7,
+      "last_submission": "2026-07-10 03:15:56",
+      "submissions": 2
+    },
+    {
+      "rank": 20,
+      "team_id": "16414053",
+      "team_name": "Tanishi＆haru",
+      "score": 1062.7,
+      "last_submission": "2026-07-10 09:09:24",
+      "submissions": 2
+    },
+    {
+      "rank": 21,
+      "team_id": "16425135",
+      "team_name": "Rmy",
+      "score": 1062.3,
+      "last_submission": "2026-07-06 00:54:49",
+      "submissions": 2
+    },
+    {
+      "rank": 22,
+      "team_id": "16379464",
+      "team_name": "OSELCOUN",
+      "score": 1058.1,
+      "last_submission": "2026-07-08 14:10:27",
+      "submissions": 2
+    },
+    {
+      "rank": 23,
+      "team_id": "16471516",
+      "team_name": "wally0593",
+      "score": 1056.9,
+      "last_submission": "2026-07-08 10:22:22",
+      "submissions": 2
+    },
+    {
+      "rank": 24,
+      "team_id": "16419163",
+      "team_name": "Xander",
+      "score": 1056.1,
+      "last_submission": "2026-07-09 02:39:25",
+      "submissions": 2
+    },
+    {
+      "rank": 25,
+      "team_id": "16381127",
+      "team_name": "Boss's Orders Are All You Need",
+      "score": 1054.3,
+      "last_submission": "2026-07-09 18:03:25",
+      "submissions": 2
+    }
+  ]
+}
