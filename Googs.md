@@ -67,34 +67,45 @@ Last updated: 2026-07-10 08:18 UTC-4
 | Errors | **0** | Legal-index gates solid — no corrupted submissions |
 | Avg loss turns | **95.9** | Losses are deep grinds, not blowouts — lock is working |
 
-## Iron Thorns v5 — RUNNING (500 games)
+## Iron Thorns v5 — DONE (500 games)
+
+| Result | Value |
+|--------|-------|
+| Win rate | **63.2%** (316W–184L) |
+| Avg loss turns | **95.6** |
+| Opponent timeouts | **0** |
+| Verdict | **FAIL** — draw penalty -6500 + END forcing starved resources |
+
+## Iron Thorns v6 — RUNNING (500 games)
 
 | Setting | Value |
 |---------|-------|
 | Games | **500** |
-| Workers | **31** |
-| Code | `5b6b761` |
-| Log | `logs/vs_alakazam_iron_thorns_v5.log` |
+| Workers | **32** |
+| Code | `860c511` |
+| Log | `logs/vs_alakazam_iron_thorns_v6.log` |
 
-### v5 Critical Evaluation Benchmarks (vs v4 baseline)
+### v6 patch (vs v5)
 
-| Benchmark | v4 baseline | v5 pass criteria |
-|-----------|-------------|------------------|
-| **Win rate** | 68.7% (310 games) | **≥ 70.0%** — Tier-1 stability at 500-game scale |
-| **Avg loss turns** | 95.9 | **Noticeable drop** — deck-decay brake plugged self-deckout leak |
-| **Opponent timeouts** | not tracked | **Spike in `TIMEOUT_P1` / `opponent_timeout_wins`** — clock squeezer working |
+| Tweak | v5 | v6 |
+|-------|----|----|
+| Draw supporter penalty | -6500 | **-2500** |
+| Deck-decay threshold | 10 cards | **7 cards** |
+| END turn bias | +5400 / +1200 | **removed** |
 
-**How we'll score v5 when pod goes idle:**
+### v6 pass criteria (vs v4 baseline 68.7%)
 
-1. `grep win_rate` → must be ≥ 0.700
-2. Compare `avg_loss_turns` to 95.9 (target: low 80s or below)
-3. `grep -c TIMEOUT` / `opponent_timeout_wins=` in log summary
+| Benchmark | v4 | v6 target |
+|-----------|-----|-----------|
+| Win rate | 68.7% | **≥ 70.0%** |
+| Avg loss turns | 95.9 | **< 95.9** (keep brake, no deckout) |
+| Opponent timeouts | 0 | any lift is bonus |
 
 ---
 
 ## Queued / In Progress
 
-- **Iron Thorns v5** — 500 games, 31 workers — **RUNNING**
+- **Iron Thorns v6** — 500 games, 32 workers — **RUNNING**
 
 ---
 
