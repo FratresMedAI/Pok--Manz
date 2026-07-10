@@ -138,7 +138,7 @@ def main() -> None:
     except RuntimeError:
         pass
 
-    workers = max(1, min(args.workers, DEFAULT_WORKERS))
+    workers = max(1, args.workers)
     wins = losses = draws = errors = 0
     loss_turns: list[int] = []
     error_samples: list[str] = []
