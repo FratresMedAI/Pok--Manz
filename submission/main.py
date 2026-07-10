@@ -27,6 +27,8 @@ from src.agents.cards import (
 from src.agents.control_policy import choose_control_indices, is_alakazam_deck
 from src.agents.counter_policy import choose_counter_indices, is_dragapult_deck, is_iron_thorns_deck, is_ogerpon_wall_deck
 from src.agents.evaluator import choose_indices, context_value, match_phase, option_type_name, safe_getattr
+from src.agents.hail_mary_tactics import evaluate_hail_mary_tactics, update_runtime_context
+from src.agents.simulator_exploits import execute_advanced_simulator_exploits, update_match_signals
 from src.agents.state_tracker import GameStateTracker
 from src.agents.telemetry_logger import log_decision
 
@@ -324,6 +326,8 @@ def agent(obs_dict: dict) -> list[int]:
             log_decision("choose_second", {"choice": choice})
             return choice
         tracker().observe(obs)
+        update_match_signals(obs)
+        update_runtime_context(obs_dict)
         if loop_guard().observe(obs):
             attack_choice = force_attack_choice(obs)
             if attack_choice is not None:
@@ -346,7 +350,15 @@ def agent(obs_dict: dict) -> list[int]:
             return choice
         if choice:
             verified = verify_and_submit_action(choice, obs)
-            log_decision("policy_choice", {"phase": match_phase(obs), "choice": verified})
+            log_decision(
+                "policy_choice",
+                {
+                    "phase": match_phase(obs),
+                    "choice": verified,
+                    "exploit": execute_advanced_simulator_exploits(obs, build_registry()),
+                    "hail_mary": evaluate_hail_mary_tactics(obs, build_registry()),
+                },
+            )
             return verified
         choice = verify_and_submit_action(velocity_fallback(obs), obs)
         log_decision("empty_choice_fallback", {"phase": match_phase(obs), "choice": choice})

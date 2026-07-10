@@ -8,6 +8,8 @@ from .anti_psychic_control import anti_control_bonus, select_anti_control_strate
 from .cards import CardFeature, count_cards
 from .control_policy import ABRA, ALAKAZAM, DUDUNSPARCE, DUNSPARCE, KADABRA, selected_card
 from .evaluator import card_id_for_option, choose_indices, context_name, option_type_name, safe_getattr, visible_opponent_energy_ids
+from .hail_mary_tactics import hail_mary_bonus
+from .simulator_exploits import exploit_bonus, execute_advanced_simulator_exploits, update_match_signals
 from .sneaky_board_manipulation import sneaky_bonus
 
 
@@ -220,13 +222,17 @@ def choose_counter_indices(
         range(len(options)),
         key=lambda index: scorer(obs, options[index], registry)
         + anti_control_bonus(obs, options[index], registry)
-        + sneaky_bonus(obs, options[index], registry),
+        + sneaky_bonus(obs, options[index], registry)
+        + exploit_bonus(obs, options[index], registry)
+        + hail_mary_bonus(obs, options[index], registry),
         reverse=True,
     )
     if ranked and (
         scorer(obs, options[ranked[0]], registry)
         + anti_control_bonus(obs, options[ranked[0]], registry)
         + sneaky_bonus(obs, options[ranked[0]], registry)
+        + exploit_bonus(obs, options[ranked[0]], registry)
+        + hail_mary_bonus(obs, options[ranked[0]], registry)
     ) > 1000:
         min_count = int(safe_getattr(select, "minCount", 0) or 0)
         max_count = int(safe_getattr(select, "maxCount", 0) or 0)
