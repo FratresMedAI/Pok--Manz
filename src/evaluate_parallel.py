@@ -36,8 +36,10 @@ def read_deck(path: Path) -> list[int]:
     return [int(line.strip()) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()][:60]
 
 
-def with_deck(agent_func, deck: list[int]):
+def with_deck(agent_func, deck: list[int], deck_mode: str | None = None):
     def wrapped(obs_dict):
+        if deck_mode:
+            os.environ["POKEMAYNE_DECK"] = deck_mode
         if obs_dict.get("select") is None:
             return deck
         return agent_func(obs_dict)
@@ -72,14 +74,21 @@ def final_result(env) -> int | None:
     return None
 
 
-def init_worker(agent_a: str, agent_b: str, deck_a: str, deck_b: str) -> None:
+def init_worker(
+    agent_a: str,
+    agent_b: str,
+    deck_a: str,
+    deck_b: str,
+    deck_mode_a: str,
+    deck_mode_b: str,
+) -> None:
     global _AGENT_A, _AGENT_B, _DECK_A, _DECK_B
     os.environ.setdefault("POKEMAYNE_TELEMETRY", "0")
     sys.path.insert(0, str(SDK_DIR))
     _DECK_A = read_deck(ROOT / deck_a)
     _DECK_B = read_deck(ROOT / deck_b)
-    _AGENT_A = with_deck(load_agent(ROOT / agent_a), _DECK_A)
-    _AGENT_B = with_deck(load_agent(ROOT / agent_b), _DECK_B)
+    _AGENT_A = with_deck(load_agent(ROOT / agent_a), _DECK_A, deck_mode_a)
+    _AGENT_B = with_deck(load_agent(ROOT / agent_b), _DECK_B, deck_mode_b)
 
 
 def run_game(game_index: int) -> tuple[int, int | None, str | None]:
@@ -101,14 +110,29 @@ def main() -> None:
     parser.add_argument("--agent-b", default="vendor/cabt_sample_submission/main.py")
     parser.add_argument("--deck-a", default="submission/deck.csv")
     parser.add_argument("--deck-b", default="vendor/cabt_sample_submission/deck.csv")
+    parser.add_argument("--deck-mode-a", default="lucario")
+    parser.add_argument("--deck-mode-b", default="baseline")
     args = parser.parse_args()
+
+    try:
+        mp.set_start_method("spawn", force=True)
+    except RuntimeError:
+        pass
 
     workers = max(1, min(args.workers, DEFAULT_WORKERS))
     wins = losses = draws = errors = 0
     with mp.Pool(
         processes=workers,
+        maxtasksperchild=8,
         initializer=init_worker,
-        initargs=(args.agent_a, args.agent_b, args.deck_a, args.deck_b),
+        initargs=(
+            args.agent_a,
+            args.agent_b,
+            args.deck_a,
+            args.deck_b,
+            args.deck_mode_a,
+            args.deck_mode_b,
+        ),
     ) as pool:
         for game_index, result, error in pool.imap_unordered(run_game, range(1, args.games + 1)):
             if result == 0:
