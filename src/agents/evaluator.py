@@ -8,6 +8,7 @@ from typing import Any
 from .archetypes import classify_from_card_ids
 from .anti_psychic_control import anti_control_bonus
 from .cards import CardFeature
+from .sneaky_board_manipulation import sneaky_bonus
 from .probability import deckout_penalty, net_material_gain, prize_value
 
 
@@ -272,7 +273,7 @@ def score_option(
         deck_count = safe_getattr(player, "deckCount", 60)
         safety -= deckout_penalty(deck_count, average_cards_drawn_per_turn=2.2)
 
-    control_bonus = anti_control_bonus(obs, option, registry)
+    control_bonus = anti_control_bonus(obs, option, registry) + sneaky_bonus(obs, option, registry)
     tempo += control_bonus
     if control_bonus > 0:
         notes.append("anti-control")

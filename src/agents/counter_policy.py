@@ -8,6 +8,7 @@ from .anti_psychic_control import anti_control_bonus, select_anti_control_strate
 from .cards import CardFeature, count_cards
 from .control_policy import ABRA, ALAKAZAM, DUDUNSPARCE, DUNSPARCE, KADABRA, selected_card
 from .evaluator import card_id_for_option, choose_indices, context_name, option_type_name, safe_getattr, visible_opponent_energy_ids
+from .sneaky_board_manipulation import sneaky_bonus
 
 
 DREEPY = 119
@@ -69,7 +70,15 @@ def dragapult_score_option(obs: Any, option: Any, registry: dict[int, CardFeatur
             score += 4200.0
         elif card_id in {ULTRA_BALL, RARE_CANDY, CRISPIN}:
             score += 2600.0
-        elif card_id in {BOSS, PRIME_CATCHER}:
+        elif card_id in {BOSS, PRIME_CATCHER, 1124}:
+            score += 2200.0
+
+    if option_name == "PLAY":
+        if card_id in {1087, 1197}:
+            score += 2800.0
+        if card_id in {1088, 1182, 1124}:
+            score += 3000.0
+        if card_id == 11:
             score += 2200.0
 
     if option_name == "EVOLVE":
@@ -87,11 +96,7 @@ def dragapult_score_option(obs: Any, option: Any, registry: dict[int, CardFeatur
         score += 3600.0
         if select_anti_control_strategy(obs, registry) == "EXECUTE_BENCH_SNIPE_PRIORITY":
             score += 1800.0
-
-    if option_name == "PLAY":
-        if card_id in {1087, 1197}:  # Hand Trimmer / Xerosic
-            score += 2800.0
-        if card_id == 11:
+        if card_id in {986, 112, 139}:
             score += 2200.0
 
     if option_name == "ATTACH" and card_id == 11:
@@ -104,8 +109,8 @@ def dragapult_score_option(obs: Any, option: Any, registry: dict[int, CardFeatur
         elif ctx in {"DAMAGE", "DAMAGE_COUNTER", "EFFECT_TARGET", "SWITCH", "TO_ACTIVE"}:
             if selected_id in ALAKAZAM_ENGINE:
                 score += 3600.0
-            elif selected_id == FEZANDIPITI:
-                score += 900.0
+            elif selected_id in {FEZANDIPITI, 343, 391}:
+                score += 2400.0
 
     return score
 
@@ -213,10 +218,16 @@ def choose_counter_indices(
         return []
     ranked = sorted(
         range(len(options)),
-        key=lambda index: scorer(obs, options[index], registry) + anti_control_bonus(obs, options[index], registry),
+        key=lambda index: scorer(obs, options[index], registry)
+        + anti_control_bonus(obs, options[index], registry)
+        + sneaky_bonus(obs, options[index], registry),
         reverse=True,
     )
-    if ranked and scorer(obs, options[ranked[0]], registry) + anti_control_bonus(obs, options[ranked[0]], registry) > 1000:
+    if ranked and (
+        scorer(obs, options[ranked[0]], registry)
+        + anti_control_bonus(obs, options[ranked[0]], registry)
+        + sneaky_bonus(obs, options[ranked[0]], registry)
+    ) > 1000:
         min_count = int(safe_getattr(select, "minCount", 0) or 0)
         max_count = int(safe_getattr(select, "maxCount", 0) or 0)
         count = max(min_count, max_count)

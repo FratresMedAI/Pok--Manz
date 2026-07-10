@@ -194,21 +194,23 @@ def iron_thorns_counter_deck() -> list[int]:
 
 
 def dragapult_snipe_deck() -> list[int]:
-    """Bench-sniping Dragapult list built from legal CABT card IDs."""
+    """Bench-sniping Dragapult with gust-trap and poison checkup tech."""
     return (
         [119] * 4
         + [120] * 4
         + [121] * 3
-        + [140]
-        + [1086] * 4
+        + [986] * 2
+        + [112]
+        + [1086] * 3
         + [1121] * 4
         + [1079] * 3
         + [1088]
-        + [1182] * 4
+        + [1182] * 3
+        + [1124] * 2
         + [1225] * 4
-        + [1231] * 2
+        + [1231]
         + [1198] * 2
-        + [1097] * 2
+        + [1097]
         + [1152] * 4
         + [1087] * 2
         + [1197]
