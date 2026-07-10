@@ -13,7 +13,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 SDK_DIR = ROOT / "vendor" / "cabt_sample_submission"
-DEFAULT_WORKERS = 31
+DEFAULT_WORKERS = 128
 
 _AGENT_A: Any = None
 _AGENT_B: Any = None
