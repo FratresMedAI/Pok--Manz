@@ -13,7 +13,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 SDK_DIR = ROOT / "vendor" / "cabt_sample_submission"
-DEFAULT_WORKERS = 128
+DEFAULT_WORKERS = 32
 
 _AGENT_A: Any = None
 _AGENT_B: Any = None
@@ -138,7 +138,7 @@ def main() -> None:
     except RuntimeError:
         pass
 
-    workers = max(1, args.workers)
+    workers = max(1, min(args.workers, DEFAULT_WORKERS))
     wins = losses = draws = errors = 0
     loss_turns: list[int] = []
     error_samples: list[str] = []
