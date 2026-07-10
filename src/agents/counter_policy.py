@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from typing import Any
 
+from .anti_psychic_control import anti_control_bonus, select_anti_control_strategy
 from .cards import CardFeature, count_cards
 from .control_policy import ABRA, ALAKAZAM, DUDUNSPARCE, DUNSPARCE, KADABRA, selected_card
-from .evaluator import card_id_for_option, choose_indices, context_name, option_type_name, safe_getattr
+from .evaluator import card_id_for_option, choose_indices, context_name, option_type_name, safe_getattr, visible_opponent_energy_ids
 
 
 DREEPY = 119
@@ -84,6 +85,17 @@ def dragapult_score_option(obs: Any, option: Any, registry: dict[int, CardFeatur
 
     if option_name == "ATTACK":
         score += 3600.0
+        if select_anti_control_strategy(obs, registry) == "EXECUTE_BENCH_SNIPE_PRIORITY":
+            score += 1800.0
+
+    if option_name == "PLAY":
+        if card_id in {1087, 1197}:  # Hand Trimmer / Xerosic
+            score += 2800.0
+        if card_id == 11:
+            score += 2200.0
+
+    if option_name == "ATTACH" and card_id == 11:
+        score += 3000.0
 
     if option_name == "CARD":
         selected_id = safe_getattr(selected_card(obs, option), "id") or card_id
@@ -124,6 +136,9 @@ def ogerpon_score_option(obs: Any, option: Any, registry: dict[int, CardFeature]
     if option_name == "ATTACK":
         score += 3400.0
 
+    if option_name == "PLAY" and card_id == 1081 and visible_opponent_energy_ids(obs) & {11, 13, 14, 18, 19}:
+        score += 3600.0
+
     if option_name == "CARD":
         selected_id = safe_getattr(selected_card(obs, option), "id") or card_id
         if ctx in {"SETUP_ACTIVE_POKEMON", "TO_ACTIVE", "SWITCH"} and selected_id == CORNERSTONE:
@@ -149,7 +164,7 @@ def iron_thorns_score_option(obs: Any, option: Any, registry: dict[int, CardFeat
     score = 0.0
 
     if option_name == "PLAY":
-        if card_id in {POFFIN, ULTRA_BALL, RARE_CANDY, CRISPIN}:
+        if card_id in {ULTRA_BALL, RARE_CANDY, CRISPIN}:
             score += 2600.0
         elif card_id in {BOSS, PRIME_CATCHER}:
             score += 2000.0
@@ -196,8 +211,12 @@ def choose_counter_indices(
     options = list(safe_getattr(select, "option", []) or [])
     if not options:
         return []
-    ranked = sorted(range(len(options)), key=lambda index: scorer(obs, options[index], registry), reverse=True)
-    if ranked and scorer(obs, options[ranked[0]], registry) > 1000:
+    ranked = sorted(
+        range(len(options)),
+        key=lambda index: scorer(obs, options[index], registry) + anti_control_bonus(obs, options[index], registry),
+        reverse=True,
+    )
+    if ranked and scorer(obs, options[ranked[0]], registry) + anti_control_bonus(obs, options[ranked[0]], registry) > 1000:
         min_count = int(safe_getattr(select, "minCount", 0) or 0)
         max_count = int(safe_getattr(select, "maxCount", 0) or 0)
         count = max(min_count, max_count)

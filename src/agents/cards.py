@@ -145,26 +145,6 @@ def alakazam_control_deck() -> list[int]:
     )
 
 
-def dragapult_snipe_deck() -> list[int]:
-    """Bench-sniping Dragapult list built from legal CABT card IDs."""
-    return (
-        [119] * 4
-        + [120] * 4
-        + [121] * 3
-        + [140]
-        + [1086] * 4
-        + [1121] * 4
-        + [1079] * 3
-        + [1088]
-        + [1182] * 4
-        + [1225] * 4
-        + [1231] * 2
-        + [1198] * 2
-        + [1097] * 2
-        + [1152] * 4
-        + [2] * 4
-        + [5] * 14
-    )
 
 
 def ogerpon_wall_deck() -> list[int]:
@@ -185,15 +165,40 @@ def ogerpon_wall_deck() -> list[int]:
         + [1231] * 2
         + [1198] * 2
         + [1097] * 2
-        + [6] * 10
+        + [1087]
+        + [1197]
+        + [11] * 2
+        + [6] * 12
         + [1] * 6
     )
 
 
 def iron_thorns_counter_deck() -> list[int]:
-    """Iron Thorns ability-lock list aimed at Alakazam/Dudunsparce engines."""
+    """Quad Iron Thorns ability-lock list with zero-bench pilot support."""
     return (
-        [37] * 3
+        [37] * 4
+        + [1121] * 4
+        + [1079] * 2
+        + [1088]
+        + [1182] * 2
+        + [1225] * 3
+        + [1198] * 2
+        + [1097] * 2
+        + [1087] * 2
+        + [1197]
+        + [1152] * 2
+        + [11] * 2
+        + [4] * 29
+        + [6] * 4
+    )
+
+
+def dragapult_snipe_deck() -> list[int]:
+    """Bench-sniping Dragapult list built from legal CABT card IDs."""
+    return (
+        [119] * 4
+        + [120] * 4
+        + [121] * 3
         + [140]
         + [1086] * 4
         + [1121] * 4
@@ -205,8 +210,11 @@ def iron_thorns_counter_deck() -> list[int]:
         + [1198] * 2
         + [1097] * 2
         + [1152] * 4
-        + [4] * 8
-        + [6] * 10
+        + [1087] * 2
+        + [1197]
+        + [11] * 2
+        + [2] * 3
+        + [5] * 10
     )
 
 
