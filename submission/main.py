@@ -16,8 +16,16 @@ for candidate in (HERE, HERE.parent):
         sys.path.insert(0, str(candidate))
 
 from cg.api import all_card_data, to_observation_class
-from src.agents.cards import CardFeature, alakazam_control_deck, lucario_deck
+from src.agents.cards import (
+    CardFeature,
+    alakazam_control_deck,
+    dragapult_snipe_deck,
+    iron_thorns_counter_deck,
+    lucario_deck,
+    ogerpon_wall_deck,
+)
 from src.agents.control_policy import choose_control_indices, is_alakazam_deck
+from src.agents.counter_policy import choose_counter_indices, is_dragapult_deck, is_iron_thorns_deck, is_ogerpon_wall_deck
 from src.agents.evaluator import choose_indices, context_value, match_phase, option_type_name, safe_getattr
 from src.agents.state_tracker import GameStateTracker
 from src.agents.telemetry_logger import log_decision
@@ -74,6 +82,15 @@ def read_deck_csv() -> list[int]:
         return _DECK
     if deck_mode == "alakazam":
         _DECK = alakazam_control_deck()
+        return _DECK
+    if deck_mode == "dragapult":
+        _DECK = dragapult_snipe_deck()
+        return _DECK
+    if deck_mode == "ogerpon":
+        _DECK = ogerpon_wall_deck()
+        return _DECK
+    if deck_mode == "iron_thorns":
+        _DECK = iron_thorns_counter_deck()
         return _DECK
     for path in (HERE / "deck.csv", Path("deck.csv"), Path("/kaggle_simulations/agent/deck.csv")):
         if path.exists():
@@ -319,6 +336,8 @@ def agent(obs_dict: dict) -> list[int]:
         deck = read_deck_csv()
         if is_alakazam_deck(deck):
             choice = choose_control_indices(obs, build_registry(), load_imitation_profile())
+        elif is_dragapult_deck(deck) or is_ogerpon_wall_deck(deck) or is_iron_thorns_deck(deck):
+            choice = choose_counter_indices(obs, deck, build_registry(), load_imitation_profile())
         else:
             choice = choose_indices(obs, build_registry(), load_imitation_profile())
         if time.perf_counter() - started > SOFT_DEADLINE_SECONDS:

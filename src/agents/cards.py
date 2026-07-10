@@ -144,3 +144,75 @@ def alakazam_control_deck() -> list[int]:
         + [1266] * 3
     )
 
+
+def dragapult_snipe_deck() -> list[int]:
+    """Bench-sniping Dragapult list built from legal CABT card IDs."""
+    return (
+        [119] * 4
+        + [120] * 4
+        + [121] * 3
+        + [140]
+        + [1086] * 4
+        + [1121] * 4
+        + [1079] * 3
+        + [1088]
+        + [1182] * 4
+        + [1225] * 4
+        + [1231] * 2
+        + [1198] * 2
+        + [1097] * 2
+        + [1152] * 4
+        + [2] * 4
+        + [5] * 14
+    )
+
+
+def ogerpon_wall_deck() -> list[int]:
+    """Cornerstone Mask Ogerpon immunity wall using legal CABT card IDs."""
+    return (
+        [117] * 3
+        + [96] * 3
+        + [677] * 2
+        + [140]
+        + [1081] * 2
+        + [1116] * 3
+        + [1088]
+        + [1264] * 2
+        + [1121] * 4
+        + [1152] * 4
+        + [1182] * 3
+        + [1225] * 4
+        + [1231] * 2
+        + [1198] * 2
+        + [1097] * 2
+        + [6] * 10
+        + [1] * 6
+    )
+
+
+def iron_thorns_counter_deck() -> list[int]:
+    """Iron Thorns ability-lock list aimed at Alakazam/Dudunsparce engines."""
+    return (
+        [37] * 3
+        + [140]
+        + [1086] * 4
+        + [1121] * 4
+        + [1079] * 3
+        + [1088]
+        + [1182] * 4
+        + [1225] * 4
+        + [1231] * 2
+        + [1198] * 2
+        + [1097] * 2
+        + [1152] * 4
+        + [4] * 8
+        + [6] * 10
+    )
+
+
+def write_deck_csv(deck: list[int], path: str | Path) -> Path:
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text("\n".join(str(card_id) for card_id in deck) + "\n", encoding="utf-8")
+    return target
+
