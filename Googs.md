@@ -67,18 +67,34 @@ Last updated: 2026-07-10 08:18 UTC-4
 | Errors | **0** | Legal-index gates solid — no corrupted submissions |
 | Avg loss turns | **95.9** | Losses are deep grinds, not blowouts — lock is working |
 
-### Pre-rebuild safety tweaks (v5 — coded, not yet gauntlet-tested)
+## Iron Thorns v5 — RUNNING (500 games)
 
-1. **Deck-decay brake** — when `deckCount <= 10` + zero bench: block draw supporters / Ultra Ball (`-6500`)
-2. **Micro-clock squeezer** — Iron Thorns lock vs control: favor fast `END` (`+5400`), penalize non-essential plays
+| Setting | Value |
+|---------|-------|
+| Games | **500** |
+| Workers | **31** |
+| Code | `5b6b761` |
+| Log | `logs/vs_alakazam_iron_thorns_v5.log` |
 
-Target: squeeze **+2–3%** by cutting inversion deckouts and long-loss micro-loops.
+### v5 Critical Evaluation Benchmarks (vs v4 baseline)
+
+| Benchmark | v4 baseline | v5 pass criteria |
+|-----------|-------------|------------------|
+| **Win rate** | 68.7% (310 games) | **≥ 70.0%** — Tier-1 stability at 500-game scale |
+| **Avg loss turns** | 95.9 | **Noticeable drop** — deck-decay brake plugged self-deckout leak |
+| **Opponent timeouts** | not tracked | **Spike in `TIMEOUT_P1` / `opponent_timeout_wins`** — clock squeezer working |
+
+**How we'll score v5 when pod goes idle:**
+
+1. `grep win_rate` → must be ≥ 0.700
+2. Compare `avg_loss_turns` to 95.9 (target: low 80s or below)
+3. `grep -c TIMEOUT` / `opponent_timeout_wins=` in log summary
 
 ---
 
 ## Queued / In Progress
 
-- Pod **idle** — no active gauntlet runs
+- **Iron Thorns v5** — 500 games, 31 workers — **RUNNING**
 
 ---
 

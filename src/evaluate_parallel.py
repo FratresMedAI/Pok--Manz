@@ -91,16 +91,34 @@ def init_worker(
     _AGENT_B = with_deck(load_agent(ROOT / agent_b), _DECK_B, deck_mode_b)
 
 
-def run_game(game_index: int) -> tuple[int, int | None, str | None, int]:
+def termination_info(env) -> tuple[str, bool]:
+    """Return (tag, opponent_timed_out). opponent is player index 1 (deck B)."""
+    try:
+        last = env.steps[-1]
+        for player_index, step in enumerate(last):
+            status = str(getattr(step, "status", "") or "").upper()
+            info = getattr(step, "info", None)
+            info_blob = str(info).upper() if info is not None else ""
+            blob = f"{status} {info_blob}"
+            if any(token in blob for token in ("TIMEOUT", "DISQUAL", "OVERAGE")):
+                return (f"TIMEOUT_P{player_index}", player_index == 1)
+    except Exception:
+        pass
+    return ("NORMAL", False)
+
+
+def run_game(game_index: int) -> tuple[int, int | None, str | None, int, str, bool]:
     try:
         from kaggle_environments import make
 
         env = make("cabt", configuration={"decks": [_DECK_A, _DECK_B]})
         env.run([_AGENT_A, _AGENT_B])
         turns = len(getattr(env, "steps", []) or [])
-        return (game_index, final_result(env), None, turns)
+        result = final_result(env)
+        term_tag, opponent_timeout = termination_info(env)
+        return (game_index, result, None, turns, term_tag, opponent_timeout)
     except Exception as exc:
-        return (game_index, None, str(exc), 0)
+        return (game_index, None, str(exc), 0, "ERROR", False)
 
 
 def main() -> None:
@@ -124,6 +142,8 @@ def main() -> None:
     wins = losses = draws = errors = 0
     loss_turns: list[int] = []
     error_samples: list[str] = []
+    opponent_timeout_wins = 0
+    timeout_tags: dict[str, int] = {}
     with mp.Pool(
         processes=workers,
         maxtasksperchild=8,
@@ -137,9 +157,14 @@ def main() -> None:
             args.deck_mode_b,
         ),
     ) as pool:
-        for game_index, result, error, turns in pool.imap_unordered(run_game, range(1, args.games + 1)):
+        for game_index, result, error, turns, term_tag, opponent_timeout in pool.imap_unordered(
+            run_game, range(1, args.games + 1)
+        ):
+            timeout_tags[term_tag] = timeout_tags.get(term_tag, 0) + 1
             if result == 0:
                 wins += 1
+                if opponent_timeout:
+                    opponent_timeout_wins += 1
             elif result == 1:
                 losses += 1
                 if turns:
@@ -153,15 +178,20 @@ def main() -> None:
             if error:
                 print(f"game={game_index} error={error}", flush=True)
             else:
-                print(f"game={game_index} result={result} turns={turns}", flush=True)
+                print(
+                    f"game={game_index} result={result} turns={turns} term={term_tag}",
+                    flush=True,
+                )
 
     total = max(1, args.games)
     avg_loss_turns = (sum(loss_turns) / len(loss_turns)) if loss_turns else 0.0
     print(
         f"workers={workers} wins={wins} losses={losses} draws={draws} errors={errors} "
-        f"win_rate={wins / total:.3f} avg_loss_turns={avg_loss_turns:.1f}",
+        f"win_rate={wins / total:.3f} avg_loss_turns={avg_loss_turns:.1f} "
+        f"opponent_timeout_wins={opponent_timeout_wins}",
         flush=True,
     )
+    print(f"termination_tags={timeout_tags}", flush=True)
     if error_samples:
         print(f"error_samples={error_samples}", flush=True)
 
