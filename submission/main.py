@@ -10,25 +10,20 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
-HERE = Path(__file__).resolve().parent
+KAGGLE_AGENT_DIR = Path("/kaggle_simulations/agent")
+_MAIN_FILE = globals().get("__file__")
+HERE = Path(_MAIN_FILE).resolve().parent if _MAIN_FILE else (KAGGLE_AGENT_DIR if KAGGLE_AGENT_DIR.exists() else Path.cwd())
 for candidate in (HERE, HERE.parent):
     if (candidate / "src").exists() and str(candidate) not in sys.path:
         sys.path.insert(0, str(candidate))
 
 from cg.api import all_card_data, to_observation_class
-from src.agents.cards import (
-    CardFeature,
-    alakazam_control_deck,
-    dragapult_snipe_deck,
-    iron_thorns_counter_deck,
-    lucario_deck,
-    ogerpon_wall_deck,
-)
-from src.agents.control_policy import choose_control_indices, is_alakazam_deck
-from src.agents.counter_policy import choose_counter_indices, is_dragapult_deck, is_iron_thorns_deck, is_ogerpon_wall_deck
-from src.agents.evaluator import choose_indices, context_value, match_phase, option_type_name, safe_getattr
+from src.agents.cards import CardFeature
+from src.agents.evaluator import context_value, match_phase, option_type_name, safe_getattr
+from src.agents.strategy_router import build_strategy_plan, choose_action_indices, select_deck_for_submission
 from src.agents.anti_psychic_control import check_anti_alakazam_overrides
-from src.agents.simulator_exploits import execute_advanced_simulator_exploits, update_match_signals
+from src.agents.hail_mary_tactics import evaluate_hail_mary_tactics, update_runtime_context
+from src.agents.simulator_exploits import execute_advanced_simulator_exploits, reset_match_signals, update_match_signals
 from src.agents.state_tracker import GameStateTracker
 from src.agents.telemetry_logger import log_decision
 
@@ -38,6 +33,7 @@ _DECK: list[int] | None = None
 _IMITATION_PROFILE: dict | None = None
 _TRACKER: GameStateTracker | None = None
 _LOOP_GUARD: "LoopGuard | None" = None
+_LAST_SEEN_TURN: int | None = None
 SOFT_DEADLINE_SECONDS = 4.5
 LOOP_GUARD_THRESHOLD = 3
 
@@ -78,27 +74,7 @@ def read_deck_csv() -> list[int]:
     global _DECK
     if _DECK is not None:
         return _DECK
-    deck_mode = os.environ.get("POKEMAYNE_DECK", "lucario").lower()
-    if deck_mode == "lucario":
-        _DECK = lucario_deck()
-        return _DECK
-    if deck_mode == "alakazam":
-        _DECK = alakazam_control_deck()
-        return _DECK
-    if deck_mode == "dragapult":
-        _DECK = dragapult_snipe_deck()
-        return _DECK
-    if deck_mode == "ogerpon":
-        _DECK = ogerpon_wall_deck()
-        return _DECK
-    if deck_mode == "iron_thorns":
-        _DECK = iron_thorns_counter_deck()
-        return _DECK
-    for path in (HERE / "deck.csv", Path("deck.csv"), Path("/kaggle_simulations/agent/deck.csv")):
-        if path.exists():
-            _DECK = [int(line.strip()) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()][:60]
-            return _DECK
-    _DECK = lucario_deck()
+    _DECK = select_deck_for_submission()
     return _DECK
 
 
@@ -309,6 +285,26 @@ def tracker() -> GameStateTracker:
     return _TRACKER
 
 
+def reset_episode_state() -> None:
+    """Clear per-match trackers so ladder episodes do not leak state."""
+    global _TRACKER, _LOOP_GUARD, _LAST_SEEN_TURN
+    _TRACKER = None
+    _LOOP_GUARD = None
+    _LAST_SEEN_TURN = None
+    reset_match_signals()
+
+
+def maybe_reset_episode(obs) -> None:
+    global _LAST_SEEN_TURN
+    state = safe_getattr(obs, "current")
+    if state is None:
+        return
+    turn = int(safe_getattr(state, "turn", 0) or 0)
+    if turn <= 1 and (_LAST_SEEN_TURN is None or _LAST_SEEN_TURN > turn):
+        reset_episode_state()
+    _LAST_SEEN_TURN = turn
+
+
 def agent(obs_dict: dict) -> list[int]:
     """Return legal option indices for the current CABT observation."""
     started = time.perf_counter()
@@ -316,6 +312,7 @@ def agent(obs_dict: dict) -> list[int]:
         obs = to_observation_class(obs_dict)
         if obs.select is None:
             return read_deck_csv()
+        maybe_reset_episode(obs)
         if float(obs_dict.get("remainingOverageTime", 999.0) or 999.0) < 30.0:
             choice = verify_and_submit_action(velocity_fallback(obs), obs)
             log_decision("clock_fallback", {"phase": match_phase(obs), "choice": choice})
@@ -338,12 +335,8 @@ def agent(obs_dict: dict) -> list[int]:
                 )
                 return choice
         deck = read_deck_csv()
-        if is_alakazam_deck(deck):
-            choice = choose_control_indices(obs, build_registry(), load_imitation_profile())
-        elif is_dragapult_deck(deck) or is_ogerpon_wall_deck(deck) or is_iron_thorns_deck(deck):
-            choice = choose_counter_indices(obs, deck, build_registry(), load_imitation_profile())
-        else:
-            choice = choose_indices(obs, build_registry(), load_imitation_profile())
+        plan = build_strategy_plan(obs, deck, build_registry())
+        choice = choose_action_indices(obs, deck, build_registry(), load_imitation_profile(), plan=plan)
         if time.perf_counter() - started > SOFT_DEADLINE_SECONDS:
             choice = verify_and_submit_action(velocity_fallback(obs), obs)
             log_decision("soft_deadline_fallback", {"phase": match_phase(obs), "choice": choice})
@@ -355,6 +348,11 @@ def agent(obs_dict: dict) -> list[int]:
                 {
                     "phase": match_phase(obs),
                     "choice": verified,
+                    "strategy": plan.deck_archetype,
+                    "play_mode": plan.play_mode,
+                    "opponent": plan.opponent_archetype,
+                    "opponent_conf": plan.opponent_confidence,
+                    "strategy_notes": plan.notes,
                     "exploit": execute_advanced_simulator_exploits(obs, build_registry()),
                     "hail_mary": evaluate_hail_mary_tactics(obs, build_registry()),
                     "anti_alakazam": check_anti_alakazam_overrides(obs, build_registry()),

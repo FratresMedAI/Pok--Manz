@@ -13,6 +13,7 @@ from .evaluator import (
     safe_getattr,
     visible_opponent_ids,
 )
+from .option_utils import area_name_for
 
 
 ABRA = 741
@@ -72,7 +73,7 @@ def zone_card(obs: Any, player_index: int, area_name: str, index: int | None) ->
 
 
 def option_inplay_pokemon(obs: Any, option: Any) -> Any | None:
-    area = safe_getattr(safe_getattr(option, "inPlayArea"), "name", "")
+    area = area_name_for(safe_getattr(option, "inPlayArea", ""))
     index = safe_getattr(option, "inPlayIndex")
     state = safe_getattr(obs, "current")
     your_index = safe_getattr(state, "yourIndex", 0) if state is not None else 0
@@ -80,7 +81,7 @@ def option_inplay_pokemon(obs: Any, option: Any) -> Any | None:
 
 
 def selected_card(obs: Any, option: Any) -> Any | None:
-    area = safe_getattr(safe_getattr(option, "area"), "name", "")
+    area = area_name_for(safe_getattr(option, "area", ""))
     index = safe_getattr(option, "index")
     player_index = safe_getattr(option, "playerIndex")
     if player_index is None:

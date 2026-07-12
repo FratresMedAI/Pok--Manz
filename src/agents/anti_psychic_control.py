@@ -6,6 +6,7 @@ from typing import Any
 
 from .archetypes import classify_from_card_ids
 from .cards import CardFeature
+from .option_utils import area_name_for, context_name_for, option_type_name_for
 
 
 ABRA = 741
@@ -33,25 +34,28 @@ def safe_getattr(obj: Any, name: str, default: Any = None) -> Any:
 
 
 def option_type_name(option: Any) -> str:
-    value = safe_getattr(option, "type", "")
-    return safe_getattr(value, "name", str(value))
+    return option_type_name_for(safe_getattr(option, "type", ""))
 
 
 def context_name(obs: Any) -> str:
     select = safe_getattr(obs, "select")
-    context = safe_getattr(select, "context", "")
-    return safe_getattr(context, "name", str(context))
+    return context_name_for(safe_getattr(select, "context", ""))
 
 
 def card_id_for_option(obs: Any, option: Any) -> int | None:
     if safe_getattr(option, "cardId") is not None:
         return option.cardId
-    area_name = safe_getattr(safe_getattr(option, "area"), "name", "")
+    option_name = option_type_name(option)
+    area_name = area_name_for(safe_getattr(option, "area", ""))
     index = safe_getattr(option, "index")
     player_index = safe_getattr(option, "playerIndex")
     state = safe_getattr(obs, "current")
-    if state is None or index is None or player_index is None:
+    if area_name == "None" and option_name in {"PLAY", "ATTACH"}:
+        area_name = "HAND"
+    if state is None or index is None:
         return None
+    if player_index is None:
+        player_index = safe_getattr(state, "yourIndex", 0)
     players = safe_getattr(state, "players", [])
     if player_index >= len(players):
         return None

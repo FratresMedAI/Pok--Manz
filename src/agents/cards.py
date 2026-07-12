@@ -193,6 +193,51 @@ def iron_thorns_counter_deck() -> list[int]:
     )
 
 
+def crustle_kangaskhan_deck() -> list[int]:
+    """Leaderboard #1 list mined from 31/50 top replay wins (Budew / MPGaming line)."""
+    return (
+        [344] * 4
+        + [345] * 4
+        + [756] * 4
+        + [1086] * 4
+        + [1122] * 4
+        + [1147] * 4
+        + [1227] * 4
+        + [1225] * 4
+        + [1197] * 4
+        + [11] * 4
+        + [14] * 4
+        + [18] * 4
+        + [1123] * 4
+        + [1182] * 2
+        + [1264] * 2
+        + [1] * 4
+    )
+
+
+def rocket_spidops_deck() -> list[int]:
+    """#2 leaderboard list — Team Rocket Spidops toolbox."""
+    return (
+        [400] * 4
+        + [401] * 4
+        + [1152] * 4
+        + [1134] * 4
+        + [1216] * 4
+        + [1220] * 4
+        + [434] * 3
+        + [1218] * 3
+        + [1094] * 3
+        + [1257] * 3
+        + [1227] * 3
+        + [431] * 2
+        + [414] * 2
+        + [1121] * 2
+        + [1182] * 2
+        + [15] * 4
+        + [1] * 8
+    )
+
+
 def dragapult_snipe_deck() -> list[int]:
     """Bench-sniping Dragapult with gust-trap and poison checkup tech."""
     return (
